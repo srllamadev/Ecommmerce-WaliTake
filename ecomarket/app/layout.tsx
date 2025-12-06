@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EcoMarket - Plataforma de Materiales Reciclables",
+  title: "WaliTake - Plataforma de Materiales Reciclables",
   description: "Compra y venta de materiales reciclables y residuos reutilizables",
 };
 

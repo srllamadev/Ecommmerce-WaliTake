@@ -9,7 +9,7 @@ export default function Home() {
       <header className="border-b border-green-200 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2">
-            🌿 EcoMarket
+            🌿 WaliTake
           </Link>
           <nav className="flex gap-4 items-center">
             <Link href="/marketplace" className="text-gray-600 hover:text-green-600 font-medium transition-all duration-300 hover:scale-105">
@@ -60,7 +60,7 @@ export default function Home() {
       {/* Features */}
       <section className="container mx-auto px-4 py-20">
         <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-          🌱 ¿Cómo Funciona EcoMarket?
+          🌱 ¿Cómo Funciona WaliTake?
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           <Card className="bg-white/70 backdrop-blur-sm border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
@@ -134,7 +134,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                🌱 EcoMarket
+                🌱 WaliTake
               </h3>
               <p className="text-gray-300">
                 Plataforma líder en comercio de materiales reciclables.
@@ -167,7 +167,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 EcoMarket. Todos los derechos reservados. ♻️ Reduce, Reutiliza, Recicla.</p>
+            <p>&copy; 2025 WaliTake. Todos los derechos reservados. ♻️ Reduce, Reutiliza, Recicla.</p>
           </div>
         </div>
       </footer>

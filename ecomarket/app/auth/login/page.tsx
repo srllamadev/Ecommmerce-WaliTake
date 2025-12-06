@@ -45,7 +45,7 @@ export default function Login() {
       <Card className="w-full max-w-md bg-white/70 backdrop-blur-sm border-green-200 shadow-xl">
         <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-lg text-center">
           <div className="text-4xl mb-4">🌱</div>
-          <CardTitle className="text-2xl">Bienvenido a EcoMarket</CardTitle>
+          <CardTitle className="text-2xl">Bienvenido a WaliTake</CardTitle>
           <CardDescription className="text-green-100">
             Tu plataforma para materiales reciclables
           </CardDescription>

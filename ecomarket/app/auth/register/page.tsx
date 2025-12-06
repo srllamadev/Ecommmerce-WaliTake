@@ -82,7 +82,7 @@ export default function Register() {
         <CardHeader>
           <CardTitle>Registrarse</CardTitle>
           <CardDescription>
-            Crea tu cuenta en EcoMarket
+            Crea tu cuenta en WaliTake
           </CardDescription>
         </CardHeader>
         <CardContent>

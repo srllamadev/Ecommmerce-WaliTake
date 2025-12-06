@@ -117,7 +117,7 @@ export default function Marketplace() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center mb-6">
             <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2">
-              🌿 EcoMarket
+              🌿 WaliTake
             </Link>
             <div className="flex gap-3">
               <Link href="/test/stripe">
