@@ -41,15 +41,16 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Iniciar Sesión</CardTitle>
-          <CardDescription>
-            Accede a tu cuenta en EcoMarket
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      <Card className="w-full max-w-md bg-white/70 backdrop-blur-sm border-green-200 shadow-xl">
+        <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-lg text-center">
+          <div className="text-4xl mb-4">🌱</div>
+          <CardTitle className="text-2xl">Bienvenido a EcoMarket</CardTitle>
+          <CardDescription className="text-green-100">
+            Tu plataforma para materiales reciclables
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
@@ -72,20 +73,34 @@ export default function Login() {
               />
             </div>
             {error && (
-              <p className="text-red-600 text-sm">{error}</p>
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                ⚠️ {error}
+              </div>
             )}
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Iniciando..." : "Iniciar Sesión"}
+            <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="animate-spin">🌱</div>
+                  Iniciando...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  🚀 Iniciar Sesión
+                </span>
+              )}
             </Button>
           </form>
 
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               ¿No tienes cuenta?{" "}
-              <Link href="/auth/register" className="text-green-600 hover:underline">
-                Regístrate
+              <Link href="/auth/register" className="text-green-600 hover:text-green-700 font-medium hover:underline transition-all duration-300">
+                🌱 Regístrate y únete al movimiento ecológico
               </Link>
             </p>
+            <div className="mt-4 text-xs text-gray-500">
+              💚 Juntos por un planeta más verde
+            </div>
           </div>
         </CardContent>
       </Card>

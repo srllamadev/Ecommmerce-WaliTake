@@ -140,30 +140,41 @@ export default function EditProduct() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-green-200 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-green-600">
-              EcoMarket
+            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2">
+              🌱 EcoMarket
             </Link>
-            <Link href="/dashboard">
-              <Button variant="outline">Volver al Dashboard</Button>
-            </Link>
+            <div className="flex gap-3">
+              <Link href="/marketplace">
+                <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-300">
+                  🛍️ Ver Marketplace
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-300">
+                  📊 Mi Dashboard
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Editar Producto</CardTitle>
-            <CardDescription>
+        <Card className="max-w-2xl mx-auto bg-white/70 backdrop-blur-sm border-green-200 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              ✏️ Editar Producto
+            </CardTitle>
+            <CardDescription className="text-emerald-100">
               Modifica la información de tu material reciclable
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="title">Título del Producto</Label>
@@ -312,8 +323,17 @@ export default function EditProduct() {
                 />
               </div>
 
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Actualizando..." : "Actualizar Producto"}
+              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <div className="animate-spin">🌱</div>
+                    Actualizando...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    🔄 Actualizar Producto
+                  </span>
+                )}
               </Button>
             </form>
           </CardContent>
