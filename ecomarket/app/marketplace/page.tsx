@@ -30,6 +30,7 @@ export default function Marketplace() {
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("all")
   const [city, setCity] = useState("")
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -49,6 +50,52 @@ export default function Marketplace() {
       console.error("Error fetching products:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleQuickBuy = async (productId: string) => {
+    setCheckoutLoading(productId)
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: productId,
+          quantity: 1, // Compra rápida por defecto 1 unidad
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Error al procesar el pago')
+        return
+      }
+
+      // Importar Stripe dinámicamente solo cuando se necesite
+      const { getStripe } = await import('@/lib/stripe')
+      const stripe = await getStripe()
+
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+        })
+
+        if (error) {
+          console.error('Stripe redirect error:', error)
+          alert('Error al redirigir al checkout')
+        }
+      } else {
+        // Fallback: redirigir manualmente si Stripe no está disponible
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('Error al procesar la compra')
+    } finally {
+      setCheckoutLoading(null)
     }
   }
 
@@ -73,6 +120,11 @@ export default function Marketplace() {
               🌿 EcoMarket
             </Link>
             <div className="flex gap-3">
+              <Link href="/test/stripe">
+                <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-50 transition-all duration-300">
+                  🧪 Probar Pagos
+                </Button>
+              </Link>
               <Link href="/dashboard">
                 <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-300">
                   📊 Mi Dashboard
@@ -218,11 +270,20 @@ export default function Marketplace() {
                          '♻️ Reciclable'}
                       </span>
                     </div>
-                    <Link href={`/products/${product.id}`} className="w-full mt-4 block">
-                      <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 shadow-lg hover:shadow-xl group-hover:scale-105">
-                        👀 Ver Detalles
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        onClick={() => handleQuickBuy(product.id)}
+                        disabled={checkoutLoading === product.id || product.quantity < 1}
+                        className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        {checkoutLoading === product.id ? '🛒 Procesando...' : '🛒 Comprar Ahora'}
                       </Button>
-                    </Link>
+                      <Link href={`/products/${product.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full border-green-300 text-green-700 hover:bg-green-50 transition-all duration-300">
+                          👀 Ver Detalles
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

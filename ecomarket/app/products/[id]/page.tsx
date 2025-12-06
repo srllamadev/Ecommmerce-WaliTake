@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { getStripe } from "@/lib/stripe"
 
 interface Product {
   id: string
@@ -66,27 +67,39 @@ export default function ProductDetail() {
 
     setCheckoutLoading(true)
     try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           productId: product.id,
-          quantity,
+          quantity: quantity,
         }),
       })
 
       const data = await response.json()
 
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        alert("Error al procesar el pago")
+      if (!response.ok) {
+        alert(data.error || 'Error al procesar el pago')
+        return
+      }
+
+      // Redirigir a Stripe Checkout
+      const stripe = await getStripe()
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+        })
+
+        if (error) {
+          console.error('Stripe redirect error:', error)
+          alert('Error al redirigir al checkout')
+        }
       }
     } catch (error) {
-      console.error("Checkout error:", error)
-      alert("Error al procesar el pago")
+      console.error('Checkout error:', error)
+      alert('Error al procesar la compra')
     } finally {
       setCheckoutLoading(false)
     }

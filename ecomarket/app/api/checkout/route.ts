@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import Stripe from "stripe"
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+import { getStripeServer } from "@/lib/stripe"
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,42 +28,80 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const totalPrice = product.price * quantity
+    // Verificar que no sea el propio producto del usuario
+    if (product.sellerId === session.user.id) {
+      return NextResponse.json({ error: 'No puedes comprar tu propio producto' }, { status: 400 })
+    }
 
-    // Create order first
-    const order = await prisma.order.create({
-      data: {
-        productId,
+    // Verificar stock disponible
+    if (product.quantity < quantity) {
+      return NextResponse.json({ error: 'Stock insuficiente' }, { status: 400 })
+    }
+
+    // Crear sesión de pago de Stripe
+    const stripe = getStripeServer()
+    if (!stripe) {
+      // Modo desarrollo: simular compra exitosa
+      console.log('Stripe no configurado - simulando compra en modo desarrollo')
+
+      // Crear orden simulada
+      const order = await prisma.order.create({
+        data: {
+          productId,
+          buyerId: session.user.id,
+          sellerId: product.sellerId,
+          quantity,
+          totalPrice: product.price * quantity,
+          stripePaymentIntentId: `simulated_${Date.now()}`,
+          status: 'completed'
+        }
+      })
+
+      // Actualizar inventario
+      await prisma.product.update({
+        where: { id: productId },
+        data: {
+          quantity: { decrement: quantity }
+        }
+      })
+
+      return NextResponse.json({
+        url: `${process.env.NEXTAUTH_URL}/checkout/success?session_id=simulated_${order.id}`,
+        sessionId: `simulated_${order.id}`
+      })
+    }
+
+    const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: product.title,
+              description: `Vendido por: ${product.seller.businessName || product.seller.name}`,
+              images: product.images ? JSON.parse(product.images) : [],
+            },
+            unit_amount: product.price * 100, // precio en centavos
+          },
+          quantity: quantity,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/marketplace`,
+      metadata: {
+        productId: product.id,
         buyerId: session.user.id,
         sellerId: product.sellerId,
-        quantity,
-        totalPrice
-      }
-    })
-
-    // Simulate successful payment (for testing without real Stripe)
-    const simulatedCheckoutUrl = `${process.env.NEXTAUTH_URL}/dashboard?success=true&order=${order.id}`
-
-    // Update order with simulated payment
-    await prisma.order.update({
-      where: { id: order.id },
-      data: {
-        stripePaymentIntentId: `simulated_${Date.now()}`,
-        status: "completed" // Mark as completed for simulation
-      }
-    })
-
-    // Update product quantity
-    await prisma.product.update({
-      where: { id: productId },
-      data: {
-        quantity: { decrement: quantity }
-      }
+        quantity: quantity.toString(),
+        unitPrice: product.price.toString(),
+      },
     })
 
     return NextResponse.json({
-      url: simulatedCheckoutUrl,
-      sessionId: `simulated_${order.id}`
+      sessionId: stripeSession.id,
+      url: stripeSession.url
     })
   } catch (error) {
     console.error("Checkout error:", error)
