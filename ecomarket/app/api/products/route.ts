@@ -109,3 +109,132 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
+    const { searchParams } = new URL(request.url)
+    const productId = searchParams.get("id")
+
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      )
+    }
+
+    // Check if product exists and belongs to user
+    const product = await prisma.product.findUnique({
+      where: { id: productId }
+    })
+
+    if (!product) {
+      return NextResponse.json(
+        { error: "Product not found" },
+        { status: 404 }
+      )
+    }
+
+    if (product.sellerId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized to delete this product" },
+        { status: 403 }
+      )
+    }
+
+    await prisma.product.delete({
+      where: { id: productId }
+    })
+
+    return NextResponse.json({ message: "Product deleted successfully" })
+  } catch (error) {
+    console.error("Product deletion error:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
+    const { searchParams } = new URL(request.url)
+    const productId = searchParams.get("id")
+
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      )
+    }
+
+    // Check if product exists and belongs to user
+    const product = await prisma.product.findUnique({
+      where: { id: productId }
+    })
+
+    if (!product) {
+      return NextResponse.json(
+        { error: "Product not found" },
+        { status: 404 }
+      )
+    }
+
+    if (product.sellerId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized to edit this product" },
+        { status: 403 }
+      )
+    }
+
+    const {
+      title,
+      description,
+      price,
+      quantity,
+      unit,
+      category,
+      condition,
+      images,
+      location
+    } = await request.json()
+
+    const updatedProduct = await prisma.product.update({
+      where: { id: productId },
+      data: {
+        title,
+        description,
+        price: parseFloat(price),
+        quantity: parseInt(quantity),
+        unit,
+        category,
+        condition,
+        images,
+        location: JSON.stringify(location)
+      }
+    })
+
+    return NextResponse.json(updatedProduct)
+  } catch (error) {
+    console.error("Product update error:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}

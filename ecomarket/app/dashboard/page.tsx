@@ -94,6 +94,28 @@ export default function Dashboard() {
     }
   }
 
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/products?id=${productId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        // Refresh products
+        fetchDashboardData()
+      } else {
+        alert("Error al eliminar el producto")
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error)
+      alert("Error al eliminar el producto")
+    }
+  }
+
   if (status === "loading" || loading) {
     return <div className="container mx-auto px-4 py-8">Cargando...</div>
   }
@@ -153,7 +175,17 @@ export default function Dashboard() {
                           ${product.price}/{product.unit} • {product.quantity} disponible
                         </p>
                       </div>
-                      <div className="text-right">
+                      <div className="flex gap-2 items-center">
+                        <Link href={`/products/${product.id}/edit`}>
+                          <Button size="sm" variant="outline">Editar</Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteProduct(product.id)}
+                        >
+                          Eliminar
+                        </Button>
                         <span className={`px-2 py-1 rounded text-xs ${
                           product.status === "available"
                             ? "bg-green-100 text-green-800"
