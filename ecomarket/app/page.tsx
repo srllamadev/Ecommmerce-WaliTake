@@ -166,7 +166,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 WaliTake. Todos los derechos reservados. ♻️ Reduce, Reutiliza, Recicla.</p>
+            <p>&copy; 2025 WaliTake. ♻️ Reduce, Reutiliza, Recicla.</p>
           </div>
         </div>
       </footer>
