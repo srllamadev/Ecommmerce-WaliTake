@@ -9,7 +9,7 @@ export default function Home() {
       <header className="border-b border-green-200 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2">
-            🌿 WaliTake
+            🌿 WaliTake - Grecia Lizeth Choolner Carrillo - Taller 2
           </Link>
           <nav className="flex gap-4 items-center">
             <Link href="/marketplace" className="text-gray-600 hover:text-green-600 font-medium transition-all duration-300 hover:scale-105">
